@@ -92,10 +92,7 @@ public class FileResource {
             return "/api/resources/" + this.id + "/download";
         }
 
-        if (this.resourceType.equals(ResourceType.LINK)) {
-            return this.getPath();
-        }
-
-        return this.getPath().replaceAll(".*" + STORE_DIRECTORY, "/static/" + STORE_DIRECTORY);
+        // Return the Azure blob URL directly
+        return this.getPath();
     }
 }

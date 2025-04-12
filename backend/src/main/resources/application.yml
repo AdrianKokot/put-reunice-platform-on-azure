@@ -21,6 +21,18 @@ app:
 
 ---
 
+spring:
+  cloud:
+    azure:
+      storage:
+        blob:
+          account-name: ${AZURE_STORAGE_ACCOUNT_NAME}
+          container-name: ${AZURE_STORAGE_CONTAINER_NAME}
+          account-key: ${AZURE_STORAGE_ACCOUNT_KEY}
+          connection-string: ${AZURE_STORAGE_CONNECTION_STRING}
+
+---
+
 server:
   servlet:
     session:

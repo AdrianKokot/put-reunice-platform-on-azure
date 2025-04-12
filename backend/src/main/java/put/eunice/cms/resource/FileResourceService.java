@@ -1,7 +1,6 @@
 package put.eunice.cms.resource;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +49,7 @@ public class FileResourceService {
         var resource = fileRepository.findById(id).orElseThrow(FileNotFoundException::new);
 
         try {
-            return new UrlResource(Paths.get(resource.getPath()).toUri());
+            return new UrlResource(resource.getPath());
         } catch (IOException e) {
             throw new ResourceNotFoundException();
         }
@@ -86,7 +85,7 @@ public class FileResourceService {
                                 form.getFile(), filename, FileResource.STORE_DIRECTORY + fileResource.getId());
 
                 fileResource.setAsFileResource(
-                        filePath.toString(),
+                        filePath,
                         Objects.requireNonNull(form.getFile().getContentType()),
                         form.getFile().getSize());
 

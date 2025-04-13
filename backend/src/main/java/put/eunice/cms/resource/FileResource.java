@@ -34,6 +34,7 @@ public class FileResource {
     @NotBlank(message = "ERRORS.RESOURCE.400.DESCRIPTION_EMPTY")
     private String description;
 
+    @Column(columnDefinition = "TEXT")
     private String path;
 
     private String fileType;

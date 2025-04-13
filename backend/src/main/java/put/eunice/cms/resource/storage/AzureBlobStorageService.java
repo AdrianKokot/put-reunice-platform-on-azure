@@ -1,10 +1,8 @@
 package put.eunice.cms.resource.storage;
 
-import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.models.ListBlobsOptions;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.time.Duration;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,12 +16,14 @@ import put.eunice.cms.resource.FileResource;
 @Log
 @Profile("azure")
 public class AzureBlobStorageService implements StorageService {
-    private final BlobContainerClient blobContainerClient;
+    private final BlobServiceClient blobServiceClient;
+    private final String containerName;
 
     public AzureBlobStorageService(
             BlobServiceClient blobServiceClient,
             @Value("${azure.storage.container-name}") String containerName) {
-        this.blobContainerClient = blobServiceClient.getBlobContainerClient(containerName);
+        this.containerName = containerName;
+        this.blobServiceClient = blobServiceClient;
     }
 
     public String store(MultipartFile file, String filename) throws IOException {
@@ -31,17 +31,15 @@ public class AzureBlobStorageService implements StorageService {
             throw new IOException("Failed to store empty file.");
         }
 
-        log.info("Storing file: " + filename);
-
+        var blobContainerClient = blobServiceClient.getBlobContainerClient(containerName);
         var blobClient = blobContainerClient.getBlobClient(filename);
 
         try (var inputStream = file.getInputStream()) {
             blobClient.upload(inputStream, file.getSize(), true);
         }
 
-        var url = blobClient.getBlobUrl();
-        log.info("File stored successfully: " + filename + " at " + url);
-
+        var url = blobClient.getBlobUrl().replaceAll("%2F", "/");
+        log.finer("Stored blob: " + filename + " at " + url);
         return url;
     }
 
@@ -54,19 +52,16 @@ public class AzureBlobStorageService implements StorageService {
     }
 
     public void deleteDirectory(String directory) {
-
-        log.info("Deleting directory: " + directory);
+        var blobContainerClient = blobServiceClient.getBlobContainerClient(containerName);
         blobContainerClient
                 .listBlobs(new ListBlobsOptions().setPrefix(directory + "/"), Duration.ofSeconds(30))
                 .forEach(blobItem -> blobContainerClient.getBlobClient(blobItem.getName()).delete());
 
-        log.info("Directory deleted successfully: " + directory);
+        log.finer("Deleted directory: " + directory);
     }
 
     public void renameDirectory(String sourceDirectory, String targetDirectory) {
-
-        log.info("Renaming directory from " + sourceDirectory + " to " + targetDirectory);
-
+        var blobContainerClient = blobServiceClient.getBlobContainerClient(containerName);
         blobContainerClient
                 .listBlobs(new ListBlobsOptions().setPrefix(sourceDirectory + "/"), Duration.ofSeconds(30))
                 .forEach(
@@ -81,7 +76,7 @@ public class AzureBlobStorageService implements StorageService {
                             sourceBlob.delete();
                         });
 
-        log.info("Directory renamed successfully from " + sourceDirectory + " to " + targetDirectory);
+        log.finer("Renamed directory from " + sourceDirectory + " to " + targetDirectory);
     }
 
     public UrlResource getUrlResource(FileResource resource) throws IOException {

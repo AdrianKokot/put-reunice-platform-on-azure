@@ -77,13 +77,6 @@ public final class FileUtils {
         throw new IOException("File path is outside of the target dir: " + normalizedFilePath);
     }
 
-    public static String getSecureFilePath(String blobPrefix, String rawFilepath) throws IOException {
-        var filepath =
-                rawFilepath.replaceAll("\\.(?=.*\\.)", "").replaceAll("//", "").replaceAll("\\\\", "");
-        // Ensure the blob path doesn't contain any malicious segments
-        return blobPrefix + "/" + filepath;
-    }
-
     public static void zipArchive(List<File> files, Path zipPath) throws IOException {
         try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(zipPath.toFile()))) {
             for (File file : files) {

@@ -153,7 +153,8 @@ public class PageFullTextSearchService extends BaseFullTextSearchService
                     client.collections(COLLECTION_NAME).delete();
                     log.info("** Deleted \"" + COLLECTION_NAME + "\" collection **");
                 }
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                log.log(java.util.logging.Level.SEVERE, "Error while deleting collection", e);
             }
 
             client.collections().create(collectionSchema);

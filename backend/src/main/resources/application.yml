@@ -21,6 +21,21 @@ app:
 
 ---
 
+spring:
+  cloud:
+    azure:
+      storage:
+        blob:
+          account-name: ${AZURE_STORAGE_ACCOUNT_NAME}
+          container-name: ${AZURE_STORAGE_CONTAINER_NAME}
+          sas-token: ${AZURE_STORAGE_SAS_TOKEN}
+
+  config:
+    activate:
+      on-profile: azure
+
+---
+
 server:
   servlet:
     session:
@@ -39,7 +54,7 @@ spring:
       max-file-size: 512000KB
       max-request-size: 512000KB
   profiles:
-    active: secured, postgres
+    active: secured, postgres, azure
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher

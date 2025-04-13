@@ -231,6 +231,7 @@
   "RESOURCE_NAME": "Nazwa",
   "RESOURCE_PAGES_TAB": "Połączone strony",
   "RESOURCE_TYPE_FILE": "Plik",
+  "RESOURCE_TYPE_FILE_EXTERNAL_STORAGE": "Plik",
   "RESOURCE_TYPE_IMAGE": "Zdjęcie",
   "RESOURCE_TYPE_LINK": "Link",
   "RESOURCE_TYPE": "Typ zasobu",

@@ -20,6 +20,7 @@ import put.eunice.cms.resource.exceptions.*;
 import put.eunice.cms.resource.projections.ResourceDtoDetailed;
 import put.eunice.cms.resource.projections.ResourceDtoFormCreate;
 import put.eunice.cms.resource.projections.ResourceDtoFormUpdate;
+import put.eunice.cms.resource.storage.StorageService;
 import put.eunice.cms.security.Role;
 import put.eunice.cms.security.SecurityService;
 import put.eunice.cms.university.University;
@@ -35,6 +36,7 @@ public class FileResourceService {
     private final PageRepository pageRepository;
     private final SecurityService securityService;
     private final FileService fileService;
+    private final StorageService storageService;
 
     @Secured("ROLE_USER")
     public ResourceDtoDetailed get(Long id) {
@@ -49,8 +51,8 @@ public class FileResourceService {
         var resource = fileRepository.findById(id).orElseThrow(FileNotFoundException::new);
 
         try {
-            return new UrlResource(resource.getPath());
-        } catch (IOException e) {
+            return storageService.getUrlResource(resource);
+        } catch (Exception ignored) {
             throw new ResourceNotFoundException();
         }
     }

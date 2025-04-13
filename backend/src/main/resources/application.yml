@@ -54,7 +54,7 @@ spring:
       max-file-size: 512000KB
       max-request-size: 512000KB
   profiles:
-    active: secured, postgres, azure
+    active: secured, postgres
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher

@@ -4,12 +4,15 @@ import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.models.ListBlobsOptions;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.time.Duration;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import put.eunice.cms.resource.FileResource;
 
 @Service
 @Log
@@ -79,5 +82,9 @@ public class AzureBlobStorageService implements StorageService {
                         });
 
         log.info("Directory renamed successfully from " + sourceDirectory + " to " + targetDirectory);
+    }
+
+    public UrlResource getUrlResource(FileResource resource) throws IOException {
+        return new UrlResource(resource.getPath());
     }
 }

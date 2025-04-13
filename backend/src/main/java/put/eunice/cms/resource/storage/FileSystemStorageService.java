@@ -2,13 +2,16 @@ package put.eunice.cms.resource.storage;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import put.eunice.cms.configuration.ApplicationConfigurationProvider;
+import put.eunice.cms.resource.FileResource;
 import put.eunice.cms.resource.FileUtils;
 
 @Service
@@ -64,5 +67,9 @@ public class FileSystemStorageService implements StorageService {
         if (Files.exists(sourcePath)) {
             Files.move(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
         }
+    }
+
+    public UrlResource getUrlResource(FileResource resource) throws IOException {
+        return new UrlResource(Paths.get(resource.getPath()).toUri());
     }
 }

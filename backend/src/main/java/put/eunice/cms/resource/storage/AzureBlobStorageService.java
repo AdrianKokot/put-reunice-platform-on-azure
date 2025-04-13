@@ -1,27 +1,25 @@
-package put.eunice.cms.resource;
+package put.eunice.cms.resource.storage;
 
-import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.models.ListBlobsOptions;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.Duration;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
-public class AzureBlobStorageService {
-    private final BlobServiceClient blobServiceClient;
+@Log
+@Profile("azure")
+public class AzureBlobStorageService implements StorageService {
     private final BlobContainerClient blobContainerClient;
-    private final String containerName;
 
     public AzureBlobStorageService(
             BlobServiceClient blobServiceClient,
             @Value("${azure.storage.container-name}") String containerName) {
-        this.blobServiceClient = blobServiceClient;
-        this.containerName = containerName;
         this.blobContainerClient = blobServiceClient.getBlobContainerClient(containerName);
     }
 
@@ -30,13 +28,18 @@ public class AzureBlobStorageService {
             throw new IOException("Failed to store empty file.");
         }
 
+        log.info("Storing file: " + filename);
+
         var blobClient = blobContainerClient.getBlobClient(filename);
 
         try (var inputStream = file.getInputStream()) {
             blobClient.upload(inputStream, file.getSize(), true);
         }
 
-        return blobClient.getBlobUrl();
+        var url = blobClient.getBlobUrl();
+        log.info("File stored successfully: " + filename + " at " + url);
+
+        return url;
     }
 
     public String store(MultipartFile file, String filename, String directory) throws IOException {
@@ -47,38 +50,34 @@ public class AzureBlobStorageService {
         return this.store(file, directory + "/" + filename);
     }
 
-    public byte[] getContent(String blobName) {
-        var outputStream = new ByteArrayOutputStream();
-        blobContainerClient.getBlobClient(blobName).downloadStream(outputStream);
-
-        return outputStream.toByteArray();
-    }
-
-    public void deleteBlob(String blobName) {
-        blobContainerClient.getBlobClient(blobName).delete();
-    }
-
     public void deleteDirectory(String directory) {
+
+        log.info("Deleting directory: " + directory);
         blobContainerClient
                 .listBlobs(new ListBlobsOptions().setPrefix(directory + "/"), Duration.ofSeconds(30))
                 .forEach(blobItem -> blobContainerClient.getBlobClient(blobItem.getName()).delete());
+
+        log.info("Directory deleted successfully: " + directory);
     }
 
     public void renameDirectory(String sourceDirectory, String targetDirectory) {
+
+        log.info("Renaming directory from " + sourceDirectory + " to " + targetDirectory);
+
         blobContainerClient
                 .listBlobs(new ListBlobsOptions().setPrefix(sourceDirectory + "/"), Duration.ofSeconds(30))
                 .forEach(
                         blobItem -> {
-                            String sourceBlobName = blobItem.getName();
-                            String targetBlobName = sourceBlobName.replace(sourceDirectory, targetDirectory);
+                            var sourceBlobName = blobItem.getName();
+                            var targetBlobName = sourceBlobName.replace(sourceDirectory, targetDirectory);
 
-                            // Copy the blob to the new location
-                            BlobClient sourceBlob = blobContainerClient.getBlobClient(sourceBlobName);
-                            BlobClient targetBlob = blobContainerClient.getBlobClient(targetBlobName);
+                            var sourceBlob = blobContainerClient.getBlobClient(sourceBlobName);
+                            var targetBlob = blobContainerClient.getBlobClient(targetBlobName);
                             targetBlob.beginCopy(sourceBlob.getBlobUrl(), null);
 
-                            // Delete the source blob
                             sourceBlob.delete();
                         });
+
+        log.info("Directory renamed successfully from " + sourceDirectory + " to " + targetDirectory);
     }
 }

@@ -78,8 +78,12 @@ public class FileResource {
         this.path = path;
         this.fileType = fileType;
         this.size = size;
-        this.resourceType =
-                fileType.split("/")[0].equals("image") ? ResourceType.IMAGE : ResourceType.FILE;
+        if (path.startsWith("http")) {
+            this.resourceType = ResourceType.FILE_EXTERNAL_STORAGE;
+        } else {
+            this.resourceType =
+                    fileType.split("/")[0].equals("image") ? ResourceType.IMAGE : ResourceType.FILE;
+        }
     }
 
     public void setAsLinkResource(String url) {
@@ -92,7 +96,14 @@ public class FileResource {
             return "/api/resources/" + this.id + "/download";
         }
 
-        // Return the Azure blob URL directly
-        return this.getPath();
+        if (this.resourceType.equals(ResourceType.LINK)) {
+            return this.getPath();
+        }
+
+        if (this.resourceType.equals(ResourceType.FILE_EXTERNAL_STORAGE)) {
+            return this.getPath();
+        }
+
+        return this.getPath().replaceAll(".*" + STORE_DIRECTORY, "/static/" + STORE_DIRECTORY);
     }
 }

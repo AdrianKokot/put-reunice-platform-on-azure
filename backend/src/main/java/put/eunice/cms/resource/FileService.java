@@ -4,11 +4,12 @@ import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import put.eunice.cms.resource.storage.StorageService;
 
 @Service
 @RequiredArgsConstructor
 public class FileService {
-    private final AzureBlobStorageService storageService;
+    private final StorageService storageService;
 
     public String store(MultipartFile file, String filename) throws IOException {
         return storageService.store(file, filename);

@@ -1,6 +1,18 @@
-# EUNICE Platform
+# EUNICE Platform on azure
 
-This project is based on CMS prototype, the difference between the prototype and current state is available as [git diff](https://github.com/AdrianKokot/put-reunice-platform/compare/v1.0.0-cms-prototype...main)
+This project is a fork of REUNICE CMS prototype, that adds support for running REUNICE CMS on Azure cloud.
+
+[Original project](https://github.com/AdrianKokot/put-reunice-platform)
+
+## Running terraform
+
+```bash
+cd terraform
+terraform init
+terraform apply -var="subscription_id=your-subscription-id"
+```
+
+After a successful deployment, you can find `.env` file in the `terraform` directory. This file contains all the necessary environment variables for running the application locally or in Docker that need to be added to main `.env` file to connect to Azure resources.
 
 ## Code formatting
 

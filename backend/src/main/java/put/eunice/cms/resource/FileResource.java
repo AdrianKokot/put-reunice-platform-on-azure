@@ -34,6 +34,7 @@ public class FileResource {
     @NotBlank(message = "ERRORS.RESOURCE.400.DESCRIPTION_EMPTY")
     private String description;
 
+    @Column(columnDefinition = "TEXT")
     private String path;
 
     private String fileType;
@@ -78,8 +79,12 @@ public class FileResource {
         this.path = path;
         this.fileType = fileType;
         this.size = size;
-        this.resourceType =
-                fileType.split("/")[0].equals("image") ? ResourceType.IMAGE : ResourceType.FILE;
+        if (path.startsWith("http")) {
+            this.resourceType = ResourceType.FILE_EXTERNAL_STORAGE;
+        } else {
+            this.resourceType =
+                    fileType.split("/")[0].equals("image") ? ResourceType.IMAGE : ResourceType.FILE;
+        }
     }
 
     public void setAsLinkResource(String url) {
@@ -93,6 +98,10 @@ public class FileResource {
         }
 
         if (this.resourceType.equals(ResourceType.LINK)) {
+            return this.getPath();
+        }
+
+        if (this.resourceType.equals(ResourceType.FILE_EXTERNAL_STORAGE)) {
             return this.getPath();
         }
 

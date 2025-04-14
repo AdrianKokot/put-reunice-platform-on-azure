@@ -231,6 +231,7 @@
   "RESOURCE_NAME": "Name",
   "RESOURCE_PAGES_TAB": "Referencing pages",
   "RESOURCE_TYPE_FILE": "File",
+  "RESOURCE_TYPE_FILE_EXTERNAL_STORAGE": "File",
   "RESOURCE_TYPE_IMAGE": "Image",
   "RESOURCE_TYPE_LINK": "Link",
   "RESOURCE_TYPE": "Resource type",

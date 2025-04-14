@@ -27,3 +27,22 @@ variable "subscription_id" {
   type        = string
   default     = "your-subscription-id"
 }
+
+# PostgreSQL variables
+variable "postgres_server_name" {
+  description = "Name of the PostgreSQL Flexible Server"
+  type        = string
+  default     = "reunice-postgres-server"
+}
+
+variable "postgres_db_name" {
+  description = "Name of the PostgreSQL database"
+  type        = string
+  default     = "reunice"
+}
+
+variable "postgres_user" {
+  description = "PostgreSQL server admin username"
+  type        = string
+  default     = "postgres"
+}

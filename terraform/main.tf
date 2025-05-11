@@ -137,16 +137,16 @@ resource "azurerm_container_group" "backend_container" {
       EMAIL_TEMPLATES_DIRECTORY           = "/app/emailTemplates/"
       SMTP_SERVER                         = "put-reunice-mailpit.northeurope.azurecontainer.io"
       SMTP_PORT                           = 1025
-      SMTP_USERNAME                       = "test"
-      SMTP_PASSWORD                       = "test"
+      SMTP_USERNAME                       = var.smtp_username
+      SMTP_PASSWORD                       = var.smtp_password
       SMTP_USE_AUTH                       = "true"
       SMTP_USE_TLS                        = "true"
-      TYPESENSE_API_KEY                   = "devapikey"
+      TYPESENSE_API_KEY                   = var.typesense_apikey
       TYPESENSE_HOST                      = "put-reunice-typesense.northeurope.azurecontainer.io"
-      TYPESENSE_CACHE_ENABLED             = "true"
-      TYPESENSE_CACHE_TTL                 = "60000"
-      TYPESENSE_USE_EMBEDDING             = "false"
-      TYPESENSE_DISTANCE_THRESHOLD        = "0.30"
+      TYPESENSE_CACHE_ENABLED             = var.typesense_cache_enabled
+      TYPESENSE_CACHE_TTL                 = var.typesense_cache_ttl
+      TYPESENSE_USE_EMBEDDING             = var.typesense_use_embedding
+      TYPESENSE_DISTANCE_THRESHOLD        = var.typesense_distance_threshold
     }
 
     ports {
@@ -157,7 +157,7 @@ resource "azurerm_container_group" "backend_container" {
 
   image_registry_credential {
     server   = "ghcr.io"
-    username = "AdrianKokot"
+    username = var.github_username
     password = var.github_pat
   }
 
@@ -170,6 +170,9 @@ resource "azurerm_container_group" "backend_container" {
 
   ip_address_type = "Public"
   dns_name_label  = "put-reunice-backend"
+
+  depends_on = [azurerm_container_group.mailpit_container,
+  azurerm_container_group.typesense_container]
 }
 
 # Frontend
@@ -198,7 +201,7 @@ resource "azurerm_container_group" "frontend_container" {
 
   image_registry_credential {
     server   = "ghcr.io"
-    username = "AdrianKokot"
+    username = var.github_username
     password = var.github_pat
   }
 
@@ -215,8 +218,8 @@ resource "azurerm_container_group" "frontend_container" {
 
 # Mailpit
 
-resource "azurerm_container_group" "mailpit" {
-  name                = "mailpit"
+resource "azurerm_container_group" "mailpit_container" {
+  name                = "mailpit-container-group"
   location            = azurerm_resource_group.storage_rg.location
   resource_group_name = azurerm_resource_group.storage_rg.name
   os_type             = "Linux"
@@ -239,14 +242,14 @@ resource "azurerm_container_group" "mailpit" {
 
     environment_variables = {
       MP_SMTP_AUTH_ALLOW_INSECURE = "true"
-      MP_SMTP_AUTH                = "test:test"
-      MP_UI_AUTH                  = "test:test"
+      MP_SMTP_AUTH                = format("%s:%s", var.smtp_username, var.smtp_password)
+      MP_UI_AUTH                  = format("%s:%s", var.smtp_username, var.smtp_password)
     }
   }
 
   image_registry_credential {
     server   = "ghcr.io"
-    username = "AdrianKokot"
+    username = var.github_username
     password = var.github_pat
   }
 
@@ -263,8 +266,8 @@ resource "azurerm_container_group" "mailpit" {
 
 # Typesense
 
-resource "azurerm_container_group" "typesense" {
-  name                = "typesense"
+resource "azurerm_container_group" "typesense_container" {
+  name                = "typesense-container-group"
   location            = azurerm_resource_group.storage_rg.location
   resource_group_name = azurerm_resource_group.storage_rg.name
   os_type             = "Linux"
@@ -282,13 +285,13 @@ resource "azurerm_container_group" "typesense" {
     }
 
     environment_variables = {
-      API_KEY            = "devapikey"
+      TYPESENSE_API_KEY = var.typesense_apikey
     }
   }
 
   image_registry_credential {
     server   = "ghcr.io"
-    username = "AdrianKokot"
+    username = var.github_username
     password = var.github_pat
   }
 

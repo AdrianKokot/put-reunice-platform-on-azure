@@ -28,6 +28,12 @@ variable "subscription_id" {
   default     = "your-subscription-id"
 }
 
+variable "github_pat" {
+  description = "GitHub Personal Access Token for GHCR"
+  type        = string
+  sensitive   = true
+}
+
 # PostgreSQL variables
 variable "postgres_server_name" {
   description = "Name of the PostgreSQL Flexible Server"

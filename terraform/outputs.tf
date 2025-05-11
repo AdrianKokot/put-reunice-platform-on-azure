@@ -27,7 +27,3 @@ output "postgres_admin_password" {
 output "postgres_database_name" {
   value = azurerm_postgresql_flexible_server_database.database.name
 }
-
-output "env_file_path" {
-  value = local_file.env_file.filename
-}

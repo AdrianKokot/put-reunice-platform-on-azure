@@ -29,7 +29,7 @@ resource "azurerm_storage_account" "storage_account" {
 
 resource "azurerm_storage_container" "blob_container" {
   name                  = var.container_name
-  storage_account_id  = azurerm_storage_account.storage_account.id
+  storage_account_id    = azurerm_storage_account.storage_account.id
   container_access_type = "blob"
 }
 
@@ -102,26 +102,69 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_azure_service
   end_ip_address   = "0.0.0.0"
 }
 
-# Allow public access
-# TODO: Update to use IP of hosted backend service
-resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_public" {
-  name             = "AllowAll"
-  server_id        = azurerm_postgresql_flexible_server.postgres.id
-  start_ip_address = "0.0.0.0"
-  end_ip_address   = "255.255.255.255"
+# Spring boot docker image
+
+resource "azurerm_user_assigned_identity" "aci_identity" {
+  location            = var.location
+  name                = "${var.resource_group_name}-backend-identity"
+  resource_group_name = var.resource_group_name
+  depends_on          = [azurerm_resource_group.storage_rg]
 }
 
+resource "azurerm_container_group" "backend_container" {
+  name                = "backend-container-group"
+  location            = azurerm_resource_group.storage_rg.location
+  resource_group_name = azurerm_resource_group.storage_rg.name
+  os_type             = "Linux"
+  restart_policy      = "Never"
 
-resource "local_file" "env_file" {
-  content = <<-EOT
-AZURE_STORAGE_ACCOUNT_NAME="${azurerm_storage_account.storage_account.name}"
-AZURE_STORAGE_CONTAINER_NAME="${azurerm_storage_container.blob_container.name}"
-AZURE_STORAGE_SAS_TOKEN="${data.azurerm_storage_account_sas.sas.sas}"
+  container {
+    name   = "backend-container"
+    image  = "ghcr.io/adriankokot/put-reunice-platform-on-azure/backend:pr-20"
+    cpu    = 1
+    memory = 2
+    environment_variables = {
+      AZURE_STORAGE_ACCOUNT_NAME          = azurerm_storage_account.storage_account.name
+      AZURE_STORAGE_CONTAINER_NAME        = azurerm_storage_container.blob_container.name
+      AZURE_STORAGE_SAS_TOKEN             = data.azurerm_storage_account_sas.sas.sas
+      DB_SERVER                           = azurerm_postgresql_flexible_server.postgres.fqdn
+      POSTGRES_DB                         = azurerm_postgresql_flexible_server_database.database.name
+      POSTGRES_USER                       = azurerm_postgresql_flexible_server.postgres.administrator_login
+      POSTGRES_PASSWORD                   = azurerm_postgresql_flexible_server.postgres.administrator_password
+      APP_URL                             = "http://myapp-${random_id.dns.hex}.azurecontainer.io"
+      DATABASE_SCHEMA_HANDLING_ON_STARTUP = "create"
+      DATABASE_SCHEMA_CREATE_TYPE         = "initialize"
+      EMAIL_TEMPLATES_DIRECTORY           = "/emailTemplates/"
+    }
 
-DB_SERVER="${azurerm_postgresql_flexible_server.postgres.fqdn}"
-POSTGRES_DB="${var.postgres_db_name}"
-POSTGRES_USER="${var.postgres_user}"
-POSTGRES_PASSWORD="${random_password.postgres_password.result}"
-EOT
-  filename = "${path.module}/.env"
+    ports {
+      port     = 80
+      protocol = "TCP"
+    }
+  }
+
+  image_registry_credential {
+    server   = "ghcr.io"
+    username = "AdrianKokot"
+    password = var.github_pat
+  }
+
+  identity {
+    type = "UserAssigned"
+    identity_ids = [
+      azurerm_user_assigned_identity.aci_identity.id,
+    ]
+  }
+
+  ip_address_type = "Public"
+  dns_name_label  = "myapp-${random_id.dns.hex}"
+}
+
+resource "random_id" "dns" {
+  byte_length = 4
+}
+
+output "github_pat_debug" {
+  value     = var.github_pat
+  sensitive = true
 }

@@ -34,9 +34,10 @@ export abstract class AbstractApiService<
 > {
   protected readonly _http = inject(HttpClient);
   protected readonly _resourceUrl: string;
+  readonly apiUrl = environment.apiUrl;
 
   protected constructor(baseUrl: string) {
-    this._resourceUrl = `${environment.apiUrl}/${baseUrl}`;
+    this._resourceUrl = `${this.apiUrl}/${baseUrl}`;
   }
 
   get(id: T['id'] | BaseResource['id']) {

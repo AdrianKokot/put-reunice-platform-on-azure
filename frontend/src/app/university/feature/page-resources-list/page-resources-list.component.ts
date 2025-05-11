@@ -113,7 +113,7 @@ export class PageResourcesListComponent {
           ...initialState,
           loading: false,
           type: 'url',
-          content: `/api/resources/${data.file.id}/download`,
+          content: `${this._fileService.apiUrl}/api/resources/${data.file.id}/download`,
         });
 
       return of({ ...initialState, loading: false, type: 'unsupported' });
@@ -132,4 +132,5 @@ export class PageResourcesListComponent {
   }
 
   protected readonly ResourceType = ResourceType;
+  readonly ApiUrl = this._fileService.apiUrl;
 }

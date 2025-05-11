@@ -93,4 +93,6 @@ export class BackupListComponent extends AbstractTable<Backup> {
       .open(this._translate.instant('RESTORE_INSTRUCTIONS_CONTENT'))
       .subscribe();
   }
+
+  readonly ApiUrl = this.service.apiUrl;
 }

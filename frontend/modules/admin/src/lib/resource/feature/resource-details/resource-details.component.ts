@@ -39,4 +39,6 @@ export class ResourceDetailsComponent {
   });
 
   activeTabIndex = 0;
+
+  ApiUrl = this._service.apiUrl;
 }

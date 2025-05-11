@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
-    "build": "nx build --configuration=production --prod",
+    "build": "nx build --configuration=production",
     "test": "nx run-many --all --target=test --parallel",
     "format": "nx format:check",
     "format:fix": "nx format:write",

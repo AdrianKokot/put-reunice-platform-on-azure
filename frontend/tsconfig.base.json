@@ -25,7 +25,8 @@
       ],
       "@eunice/modules/shared/ui": ["modules/shared/ui/src/index.ts"],
       "@eunice/modules/shared/util": ["modules/shared/util/src/index.ts"],
-      "@eunice/testing": ["testing/src/index.ts"]
+      "@eunice/testing": ["testing/src/index.ts"],
+      "@eunice/environment": ["environment/environment.ts"],
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -2,8 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { PageSearchHitDto } from '../models/page';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { environment } from 'src/environments/environment';
+import { environment } from '@eunice/environment';
 
 @Injectable({
   providedIn: 'root',

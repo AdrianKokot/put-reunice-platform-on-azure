@@ -12,8 +12,7 @@ import {
 } from 'rxjs';
 import { LoggedUser, User } from '@eunice/modules/shared/data-access';
 import { throwError } from '@eunice/modules/shared/util';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { environment } from '../../../../../src/environments/environment';
+import { environment } from '@eunice/environment';
 
 @Injectable({
   providedIn: 'root',

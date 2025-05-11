@@ -36,7 +36,7 @@ export abstract class AbstractApiService<
   readonly apiUrl = environment.apiUrl;
 
   protected constructor(baseUrl: string) {
-    this._resourceUrl = `${this.apiUrl}/${baseUrl}`;
+    this._resourceUrl = `${this.apiUrl}${baseUrl}`;
   }
 
   get(id: T['id'] | BaseResource['id']) {

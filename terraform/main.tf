@@ -135,6 +135,18 @@ resource "azurerm_container_group" "backend_container" {
       DATABASE_SCHEMA_HANDLING_ON_STARTUP = "create"
       DATABASE_SCHEMA_CREATE_TYPE         = "initialize"
       EMAIL_TEMPLATES_DIRECTORY           = "/app/emailTemplates/"
+      SMTP_SERVER                         = "put-reunice-mailpit.northeurope.azurecontainer.io"
+      SMTP_PORT                           = 1025
+      SMTP_USERNAME                       = "test"
+      SMTP_PASSWORD                       = "test"
+      SMTP_USE_AUTH                       = "true"
+      SMTP_USE_TLS                        = "true"
+      TYPESENSE_API_KEY                   = "devapikey"
+      TYPESENSE_HOST                      = "put-reunice-typesense.northeurope.azurecontainer.io"
+      TYPESENSE_CACHE_ENABLED             = "true"
+      TYPESENSE_CACHE_TTL                 = "60000"
+      TYPESENSE_USE_EMBEDDING             = "false"
+      TYPESENSE_DISTANCE_THRESHOLD        = "0.30"
     }
 
     ports {
@@ -175,7 +187,7 @@ resource "azurerm_container_group" "frontend_container" {
     cpu    = 1
     memory = 2
     environment_variables = {
-      API_URL                             = "http://put-reunice-backend.northeurope.azurecontainer.io"
+      API_URL = "http://put-reunice-backend.northeurope.azurecontainer.io"
     }
 
     ports {
@@ -199,4 +211,94 @@ resource "azurerm_container_group" "frontend_container" {
 
   ip_address_type = "Public"
   dns_name_label  = "put-reunice-frontend"
+}
+
+# Mailpit
+
+resource "azurerm_container_group" "mailpit" {
+  name                = "mailpit"
+  location            = azurerm_resource_group.storage_rg.location
+  resource_group_name = azurerm_resource_group.storage_rg.name
+  os_type             = "Linux"
+  restart_policy      = "Always"
+
+  container {
+    name   = "mailpit"
+    image  = "ghcr.io/adriankokot/put-reunice-platform-on-azure/mailpit:latest"
+    cpu    = 0.5
+    memory = 1
+
+    ports {
+      port     = 8025
+      protocol = "TCP"
+    }
+    ports {
+      port     = 1025
+      protocol = "TCP"
+    }
+
+    environment_variables = {
+      MP_SMTP_AUTH_ALLOW_INSECURE = "true"
+      MP_SMTP_AUTH                = "test:test"
+      MP_UI_AUTH                  = "test:test"
+    }
+  }
+
+  image_registry_credential {
+    server   = "ghcr.io"
+    username = "AdrianKokot"
+    password = var.github_pat
+  }
+
+  identity {
+    type = "UserAssigned"
+    identity_ids = [
+      azurerm_user_assigned_identity.aci_identity.id,
+    ]
+  }
+
+  ip_address_type = "Public"
+  dns_name_label  = "put-reunice-mailpit"
+}
+
+# Typesense
+
+resource "azurerm_container_group" "typesense" {
+  name                = "typesense"
+  location            = azurerm_resource_group.storage_rg.location
+  resource_group_name = azurerm_resource_group.storage_rg.name
+  os_type             = "Linux"
+  restart_policy      = "OnFailure"
+
+  container {
+    name   = "typesense"
+    image  = "ghcr.io/adriankokot/put-reunice-platform-on-azure/typesense:latest"
+    cpu    = 1
+    memory = 2
+
+    ports {
+      port     = 8108
+      protocol = "TCP"
+    }
+
+    environment_variables = {
+      API_KEY            = "devapikey"
+    }
+  }
+
+  image_registry_credential {
+    server   = "ghcr.io"
+    username = "AdrianKokot"
+    password = var.github_pat
+  }
+
+  identity {
+    type = "UserAssigned"
+    identity_ids = [
+      azurerm_user_assigned_identity.aci_identity.id,
+    ]
+  }
+
+  ip_address_type = "Public"
+  dns_name_label  = "put-reunice-typesense"
 }

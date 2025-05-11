@@ -131,10 +131,51 @@ resource "azurerm_container_group" "backend_container" {
       POSTGRES_DB                         = azurerm_postgresql_flexible_server_database.database.name
       POSTGRES_USER                       = azurerm_postgresql_flexible_server.postgres.administrator_login
       POSTGRES_PASSWORD                   = azurerm_postgresql_flexible_server.postgres.administrator_password
-      APP_URL                             = "http://myapp-${random_id.dns.hex}.azurecontainer.io"
+      APP_URL                             = "http://put-reunice-frontend.northeurope.azurecontainer.io"
       DATABASE_SCHEMA_HANDLING_ON_STARTUP = "create"
       DATABASE_SCHEMA_CREATE_TYPE         = "initialize"
       EMAIL_TEMPLATES_DIRECTORY           = "/emailTemplates/"
+    }
+
+    ports {
+      port     = 8080
+      protocol = "TCP"
+    }
+  }
+
+  image_registry_credential {
+    server   = "ghcr.io"
+    username = "AdrianKokot"
+    password = var.github_pat
+  }
+
+  identity {
+    type = "UserAssigned"
+    identity_ids = [
+      azurerm_user_assigned_identity.aci_identity.id,
+    ]
+  }
+
+  ip_address_type = "Public"
+  dns_name_label  = "put-reunice-backend"
+}
+
+# Frontend
+
+resource "azurerm_container_group" "frontend_container" {
+  name                = "frontend-container-group"
+  location            = azurerm_resource_group.storage_rg.location
+  resource_group_name = azurerm_resource_group.storage_rg.name
+  os_type             = "Linux"
+  restart_policy      = "Never"
+
+  container {
+    name   = "frontend-container"
+    image  = "ghcr.io/adriankokot/put-reunice-platform-on-azure/frontend:pr-20"
+    cpu    = 1
+    memory = 2
+    environment_variables = {
+      API_URL                             = "http://put-reunice-backend.northeurope.azurecontainer.io"
     }
 
     ports {
@@ -157,14 +198,5 @@ resource "azurerm_container_group" "backend_container" {
   }
 
   ip_address_type = "Public"
-  dns_name_label  = "myapp-${random_id.dns.hex}"
-}
-
-resource "random_id" "dns" {
-  byte_length = 4
-}
-
-output "github_pat_debug" {
-  value     = var.github_pat
-  sensitive = true
+  dns_name_label  = "put-reunice-frontend"
 }

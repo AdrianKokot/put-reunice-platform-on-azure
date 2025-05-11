@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { map } from 'rxjs';
 import { ApiPaginatedResponse, ApiParams } from '../api.params';
 import { BaseResource } from '../models/base-resource';
+import { environment } from '../../../../../../src/environments/environment';
 
 export const TOTAL_ITEMS_HEADER = 'X-Whole-Content-Length';
 
@@ -31,8 +32,11 @@ export abstract class AbstractApiService<
   TUpdatePayload = T,
 > {
   protected readonly _http = inject(HttpClient);
+  protected readonly _resourceUrl: string;
 
-  protected constructor(protected readonly _resourceUrl: string) {}
+  protected constructor(baseUrl: string) {
+    this._resourceUrl = `${environment.apiUrl}/${baseUrl}`;
+  }
 
   get(id: T['id'] | BaseResource['id']) {
     return this._http.get<T>(`${this._resourceUrl}/${id}`);

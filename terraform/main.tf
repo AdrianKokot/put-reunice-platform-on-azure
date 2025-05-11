@@ -120,7 +120,7 @@ resource "azurerm_container_group" "backend_container" {
 
   container {
     name   = "backend-container"
-    image  = "ghcr.io/adriankokot/put-reunice-platform-on-azure/backend:pr-20"
+    image  = "ghcr.io/adriankokot/put-reunice-platform-on-azure/backend:latest"
     cpu    = 1
     memory = 2
     environment_variables = {
@@ -133,7 +133,7 @@ resource "azurerm_container_group" "backend_container" {
       POSTGRES_PASSWORD                   = azurerm_postgresql_flexible_server.postgres.administrator_password
       APP_URL                             = "http://put-reunice-frontend.northeurope.azurecontainer.io"
       DATABASE_SCHEMA_HANDLING_ON_STARTUP = "create"
-      DATABASE_SCHEMA_CREATE_TYPE         = "initialize"
+      DATABASE_SCHEMA_CREATE_TYPE         = "populate"
       EMAIL_TEMPLATES_DIRECTORY           = "/app/emailTemplates/"
       SMTP_SERVER                         = "put-reunice-mailpit.northeurope.azurecontainer.io"
       SMTP_PORT                           = 1025
@@ -172,7 +172,7 @@ resource "azurerm_container_group" "backend_container" {
   dns_name_label  = "put-reunice-backend"
 
   depends_on = [azurerm_container_group.mailpit_container,
-  azurerm_container_group.typesense_container]
+  azurerm_container_group.typesense_container, azurerm_postgresql_flexible_server.postgres]
 }
 
 # Frontend
@@ -186,7 +186,7 @@ resource "azurerm_container_group" "frontend_container" {
 
   container {
     name   = "frontend-container"
-    image  = "ghcr.io/adriankokot/put-reunice-platform-on-azure/frontend:pr-20"
+    image  = "ghcr.io/adriankokot/put-reunice-platform-on-azure/frontend:latest"
     cpu    = 1
     memory = 2
     environment_variables = {
@@ -266,6 +266,13 @@ resource "azurerm_container_group" "mailpit_container" {
 
 # Typesense
 
+resource "azurerm_storage_share" "typesense_fileshare" {
+  name                 = "typesense-data"
+  storage_account_id = azurerm_storage_account.storage_account.id
+  quota                = 50 # GB
+  depends_on = [ azurerm_storage_account.storage_account ]
+}
+
 resource "azurerm_container_group" "typesense_container" {
   name                = "typesense-container-group"
   location            = azurerm_resource_group.storage_rg.location
@@ -285,7 +292,16 @@ resource "azurerm_container_group" "typesense_container" {
     }
 
     environment_variables = {
-      TYPESENSE_API_KEY = var.typesense_apikey
+      TYPESENSE_API_KEY  = var.typesense_apikey
+      TYPESENSE_DATA_DIR = "/data"
+    }
+    volume {
+      name                 = "typesense-data"
+      mount_path           = "/data"
+      storage_account_key  = azurerm_storage_account.storage_account.primary_access_key
+      storage_account_name = azurerm_storage_account.storage_account.name
+      share_name = azurerm_storage_share.typesense_fileshare.name
+      read_only = false
     }
   }
 

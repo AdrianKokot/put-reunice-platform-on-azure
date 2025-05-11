@@ -55,7 +55,7 @@ jobs:
 
 
   build-and-push-backend-image:
-    # if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     name: 📦 Build and push backend container image to registry
     runs-on: ubuntu-latest
     needs: [build-and-test-java]
@@ -101,10 +101,10 @@ jobs:
 
 
   build-and-push-frontend-image:
-    # if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     name: 📦 Build and push frontend container image to registry
     runs-on: ubuntu-latest
-    needs: [build-and-test-java]
+    needs: [build-and-test-angular]
 
     permissions:
       contents: 'read'

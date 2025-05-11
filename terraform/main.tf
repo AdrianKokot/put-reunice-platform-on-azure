@@ -134,7 +134,7 @@ resource "azurerm_container_group" "backend_container" {
       APP_URL                             = "http://put-reunice-frontend.northeurope.azurecontainer.io"
       DATABASE_SCHEMA_HANDLING_ON_STARTUP = "create"
       DATABASE_SCHEMA_CREATE_TYPE         = "initialize"
-      EMAIL_TEMPLATES_DIRECTORY           = "/emailTemplates/"
+      EMAIL_TEMPLATES_DIRECTORY           = "/app/emailTemplates/"
     }
 
     ports {

@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { map } from 'rxjs';
 import { ApiPaginatedResponse, ApiParams } from '../api.params';
 import { BaseResource } from '../models/base-resource';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { environment } from '../../../../../../src/environments/environment';
 
 export const TOTAL_ITEMS_HEADER = 'X-Whole-Content-Length';

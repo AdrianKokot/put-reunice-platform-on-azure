@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@eunice/environment": ["environment/environment.ts"],
       "@eunice/modules/admin": ["modules/admin/src/index.ts"],
       "@eunice/modules/auth": ["modules/auth/src/index.ts"],
       "@eunice/modules/shared/data-access": [
@@ -25,8 +26,7 @@
       ],
       "@eunice/modules/shared/ui": ["modules/shared/ui/src/index.ts"],
       "@eunice/modules/shared/util": ["modules/shared/util/src/index.ts"],
-      "@eunice/testing": ["testing/src/index.ts"],
-      "@eunice/environment": ["environment/environment.ts"],
+      "@eunice/testing": ["testing/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

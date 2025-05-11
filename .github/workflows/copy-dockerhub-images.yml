@@ -1,0 +1,57 @@
+name: 🤖 Copy images
+
+on:
+  pull_request:
+
+jobs:
+  repush-typesense-docker-image-from-dockerhub-to-github-repository:
+    name: 📦 Repush Typesense Docker image from DockerHub to GitHub Container Registry
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      packages: 'write'
+    steps:
+      - name: Log in to GitHub container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Lowercase the repo name
+        run: echo "IMAGE_NAME=${GITHUB_REPOSITORY,,}/typesense" >>${GITHUB_ENV}
+
+      - name: Pull Typesense Docker image from DockerHub
+        run: docker pull typesense/typesense:28.0
+
+      - name: Tag Typesense Docker image
+        run: docker tag typesense/typesense:28.0 ghcr.io/${{ env.IMAGE_NAME }}
+
+      - name: Push Typesense Docker image to GitHub Container Registry
+        run: docker push ghcr.io/${{ env.IMAGE_NAME }}
+
+  repush-mailpit-docker-image-from-dockerhub-to-github-repository:
+    name: 📦 Repush Mailpit Docker image from DockerHub to GitHub Container Registry
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      packages: 'write'
+    steps:
+      - name: Log in to GitHub container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Lowercase the repo name
+        run: echo "IMAGE_NAME=${GITHUB_REPOSITORY,,}/mailpit" >>${GITHUB_ENV}
+
+      - name: Pull Mailpit Docker image from DockerHub
+        run: docker pull axllent/mailpit
+
+      - name: Tag Mailpit Docker image
+        run: docker tag axllent/mailpit ghcr.io/${{ env.IMAGE_NAME }}
+
+      - name: Push Mailpit Docker image to GitHub Container Registry
+        run: docker push ghcr.io/${{ env.IMAGE_NAME }}

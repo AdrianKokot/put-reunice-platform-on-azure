@@ -42,7 +42,7 @@ export class AuthService {
   }
 
   login(user: Pick<User, 'password' | 'username'>): Observable<User | null> {
-    return this._http.post(`${this._resourceUrl}/login`, user).pipe(
+    return this._http.post(`${environment.apiUrl}/login`, user).pipe(
       switchMap(() => this.getUser()),
       tap((user) => this._user$.next(user)),
     );

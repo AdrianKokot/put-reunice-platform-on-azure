@@ -40,8 +40,9 @@ server:
   servlet:
     session:
       cookie:
-        http-only: true
-        secure: true
+        http-only: false
+        secure: false
+        same-site: none
       timeout: 30m
 
 spring:

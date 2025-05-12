@@ -59,7 +59,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<unknown>> {
     if (
       !request.url.includes('/api/') ||
-      this._ignoredUrls.includes(request.url)
+      this._ignoredUrls.some((url) => request.url.includes(url))
     ) {
       return next.handle(request);
     }

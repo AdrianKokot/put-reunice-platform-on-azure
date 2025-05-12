@@ -18,7 +18,8 @@ import { environment } from '@eunice/environment';
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly _resourceUrl = `${environment.apiUrl}/api/users`;
+  private readonly _baseUrl = `${environment.apiUrl}/api`;
+  private readonly _resourceUrl = `${this._baseUrl}/users`;
   private readonly _http = inject(HttpClient);
   private readonly _user$ = new Subject<User | null>();
 
@@ -42,7 +43,7 @@ export class AuthService {
   }
 
   login(user: Pick<User, 'password' | 'username'>): Observable<User | null> {
-    return this._http.post(`${environment.apiUrl}/login`, user).pipe(
+    return this._http.post(`${this._baseUrl}/login`, user).pipe(
       switchMap(() => this.getUser()),
       tap((user) => this._user$.next(user)),
     );
@@ -50,7 +51,7 @@ export class AuthService {
 
   logout(): Observable<unknown> {
     return this._http
-      .post(`${environment.apiUrl}/logout`, {})
+      .post(`${this._baseUrl}/logout`, {})
       .pipe(tap(() => this._user$.next(null)));
   }
 

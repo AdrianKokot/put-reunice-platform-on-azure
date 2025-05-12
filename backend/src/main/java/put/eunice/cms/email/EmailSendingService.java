@@ -128,7 +128,7 @@ public class EmailSendingService implements EmailSending {
             javaMailSender.send(message);
             contentMap.clear();
         } catch (MessagingException e) {
-            log.log(Level.SEVERE, "Error sending email", e);
+            log.log(Level.SEVERE, "Error sending email to: " + receiver.getEmail(), e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -156,7 +156,7 @@ public class EmailSendingService implements EmailSending {
             javaMailSender.send(message);
             contentMap.clear();
         } catch (MessagingException e) {
-            log.log(Level.SEVERE, "Error sending email", e);
+            log.log(Level.SEVERE, "Error sending email to: " + oldEmail, e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -186,7 +186,7 @@ public class EmailSendingService implements EmailSending {
             javaMailSender.send(message);
             contentMap.clear();
         } catch (MessagingException e) {
-            log.log(Level.SEVERE, "Error sending email", e);
+            log.log(Level.SEVERE, "Error sending email to: " + oldEmail, e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -214,7 +214,7 @@ public class EmailSendingService implements EmailSending {
             javaMailSender.send(message);
             contentMap.clear();
         } catch (MessagingException e) {
-            log.log(Level.SEVERE, "Error sending email", e);
+            log.log(Level.SEVERE, "Error sending email to: " + ticket.getRequesterEmail(), e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -242,7 +242,7 @@ public class EmailSendingService implements EmailSending {
                 javaMailSender.send(message);
                 contentMap.clear();
             } catch (MessagingException e) {
-                log.log(Level.SEVERE, "Error sending email", e);
+                log.log(Level.SEVERE, "Error sending email to: " + ticketUser.getUser().getEmail(), e);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -268,7 +268,7 @@ public class EmailSendingService implements EmailSending {
             javaMailSender.send(message);
             contentMap.clear();
         } catch (MessagingException e) {
-            log.log(Level.SEVERE, "Error sending email", e);
+            log.log(Level.SEVERE, "Error sending email to: " + receiver.getEmail(), e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -293,7 +293,7 @@ public class EmailSendingService implements EmailSending {
             contentMap.clear();
             javaMailSender.send(message);
         } catch (MessagingException e) {
-            log.log(Level.SEVERE, "Error sending email", e);
+            log.log(Level.SEVERE, "Error sending email to: " + receiver.getEmail(), e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -318,7 +318,7 @@ public class EmailSendingService implements EmailSending {
             contentMap.clear();
             javaMailSender.send(message);
         } catch (MessagingException e) {
-            log.log(Level.SEVERE, "Error sending email", e);
+            log.log(Level.SEVERE, "Error sending email to: " + receiver.getEmail(), e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -345,7 +345,7 @@ public class EmailSendingService implements EmailSending {
             javaMailSender.send(message);
             contentMap.clear();
         } catch (MessagingException e) {
-            log.log(Level.SEVERE, "Error sending email", e);
+            log.log(Level.SEVERE, "Error sending email to: " + ticket.getRequesterEmail(), e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -400,7 +400,7 @@ public class EmailSendingService implements EmailSending {
             javaMailSender.send(message);
             contentMap.clear();
         } catch (MessagingException e) {
-            log.log(Level.SEVERE, "Error sending email", e);
+            log.log(Level.SEVERE, "Error sending email to: " + ticket.getRequesterEmail(), e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -427,7 +427,7 @@ public class EmailSendingService implements EmailSending {
                 javaMailSender.send(message);
                 contentMap.clear();
             } catch (MessagingException e) {
-                System.out.println(e.getMessage());
+                log.log(Level.SEVERE, "Error sending email to: " + receiverEmail, e);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

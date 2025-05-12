@@ -179,7 +179,7 @@ jobs:
       - name: Terraform Plan
         run: |
           cd terraform
-          terraform plan
+          terraform plan -var="github_pat=${{ secrets.PAT }}"
 
       - name: Terraform Apply
         run: |

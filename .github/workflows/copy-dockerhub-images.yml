@@ -1,9 +1,13 @@
 name: 🤖 Copy images
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
+  workflow_dispatch:
+    inputs:
+      tagName:
+        description: 'Custom tag name'
+        required: true
+        default: 'custom'
+        type: string
 
 jobs:
   repush-typesense-docker-image-from-dockerhub-to-github-repository:

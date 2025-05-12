@@ -120,7 +120,7 @@ resource "azurerm_container_group" "backend_container" {
 
   container {
     name   = "backend-container"
-    image  = "ghcr.io/adriankokot/put-reunice-platform-on-azure/backend:pr-20"
+    image  = "ghcr.io/adriankokot/put-reunice-platform-on-azure/backend:latest"
     cpu    = 1
     memory = 2
     environment_variables = {
@@ -141,7 +141,8 @@ resource "azurerm_container_group" "backend_container" {
       SMTP_USERNAME                       = var.smtp_username
       SMTP_PASSWORD                       = var.smtp_password
       SMTP_USE_AUTH                       = "true"
-      SMTP_USE_TLS                        = "true"
+      SMTP_USE_TLS                        = "false"
+      MAIL_SENDER                         = "reunice@put-reunice-frontend.northeurope.azurecontainer.io"
       TYPESENSE_API_KEY                   = var.typesense_apikey
       TYPESENSE_HOST                      = "put-reunice-typesense.northeurope.azurecontainer.io"
       TYPESENSE_CACHE_ENABLED             = var.typesense_cache_enabled
@@ -172,8 +173,11 @@ resource "azurerm_container_group" "backend_container" {
   ip_address_type = "Public"
   dns_name_label  = "put-reunice-backend"
 
-  depends_on = [azurerm_container_group.mailpit_container,
-  azurerm_container_group.typesense_container, azurerm_postgresql_flexible_server.postgres]
+  depends_on = [
+    azurerm_container_group.mailpit_container,
+    azurerm_container_group.typesense_container,
+    azurerm_postgresql_flexible_server.postgres
+  ]
 }
 
 # Frontend
@@ -187,7 +191,7 @@ resource "azurerm_container_group" "frontend_container" {
 
   container {
     name   = "frontend-container"
-    image  = "ghcr.io/adriankokot/put-reunice-platform-on-azure/frontend:pr-20"
+    image  = "ghcr.io/adriankokot/put-reunice-platform-on-azure/frontend:latest"
     cpu    = 1
     memory = 2
     environment_variables = {

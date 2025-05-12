@@ -685,16 +685,16 @@ class DummyDataCreator implements ApplicationListener<ContextRefreshedEvent> {
 
         var universityIdToLogoFileName =
                 Map.of(
-                        1L, "put_logo.jpg",
-                        2L, "uam_logo.png",
-                        3L, "pums_logo.png",
-                        4L, "blank.png",
-                        5L, "ufa_logo.png",
-                        6L, "wut_logo.jpg",
-                        7L, "blank.png",
-                        8L, "gmu_logo.png",
-                        9L, "blank.png",
-                        10L, "us_logo.jpg");
+                        1L, "/put_logo.jpg",
+                        2L, "/uam_logo.png",
+                        3L, "/pums_logo.png",
+                        4L, "/blank.png",
+                        5L, "/ufa_logo.png",
+                        6L, "/wut_logo.jpg",
+                        7L, "/blank.png",
+                        8L, "/gmu_logo.png",
+                        9L, "/blank.png",
+                        10L, "/us_logo.jpg");
 
         for (var entry : universityIdToLogoFileName.entrySet()) {
             var universityId = entry.getKey();

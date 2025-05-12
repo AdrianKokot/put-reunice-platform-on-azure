@@ -11,8 +11,10 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
@@ -28,6 +30,7 @@ import put.eunice.cms.ticketUserStatus.TicketUserStatus;
 import put.eunice.cms.user.User;
 
 @Service
+@Log
 @Profile("!test")
 public class EmailSendingService implements EmailSending {
     private final ApplicationConfigurationProvider applicationConfigurationProvider;
@@ -125,7 +128,7 @@ public class EmailSendingService implements EmailSending {
             javaMailSender.send(message);
             contentMap.clear();
         } catch (MessagingException e) {
-            System.out.println(e.getMessage());
+            log.log(Level.SEVERE, "Error sending email", e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -153,7 +156,7 @@ public class EmailSendingService implements EmailSending {
             javaMailSender.send(message);
             contentMap.clear();
         } catch (MessagingException e) {
-            System.out.println(e.getMessage());
+            log.log(Level.SEVERE, "Error sending email", e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -183,7 +186,7 @@ public class EmailSendingService implements EmailSending {
             javaMailSender.send(message);
             contentMap.clear();
         } catch (MessagingException e) {
-            System.out.println(e.getMessage());
+            log.log(Level.SEVERE, "Error sending email", e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -211,7 +214,7 @@ public class EmailSendingService implements EmailSending {
             javaMailSender.send(message);
             contentMap.clear();
         } catch (MessagingException e) {
-            System.out.println(e.getMessage());
+            log.log(Level.SEVERE, "Error sending email", e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -239,7 +242,7 @@ public class EmailSendingService implements EmailSending {
                 javaMailSender.send(message);
                 contentMap.clear();
             } catch (MessagingException e) {
-                System.out.println(e.getMessage());
+                log.log(Level.SEVERE, "Error sending email", e);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -265,7 +268,7 @@ public class EmailSendingService implements EmailSending {
             javaMailSender.send(message);
             contentMap.clear();
         } catch (MessagingException e) {
-            System.out.println(e.getMessage());
+            log.log(Level.SEVERE, "Error sending email", e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -290,7 +293,7 @@ public class EmailSendingService implements EmailSending {
             contentMap.clear();
             javaMailSender.send(message);
         } catch (MessagingException e) {
-            System.out.println(e.getMessage());
+            log.log(Level.SEVERE, "Error sending email", e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -315,7 +318,7 @@ public class EmailSendingService implements EmailSending {
             contentMap.clear();
             javaMailSender.send(message);
         } catch (MessagingException e) {
-            System.out.println(e.getMessage());
+            log.log(Level.SEVERE, "Error sending email", e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -342,7 +345,7 @@ public class EmailSendingService implements EmailSending {
             javaMailSender.send(message);
             contentMap.clear();
         } catch (MessagingException e) {
-            System.out.println(e.getMessage());
+            log.log(Level.SEVERE, "Error sending email", e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -397,7 +400,7 @@ public class EmailSendingService implements EmailSending {
             javaMailSender.send(message);
             contentMap.clear();
         } catch (MessagingException e) {
-            System.out.println(e.getMessage());
+            log.log(Level.SEVERE, "Error sending email", e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -111,7 +111,7 @@ public class UserService {
         }
         newUser.setFirstName(form.getFirstName());
         newUser.setLastName(form.getLastName());
-        newUser.setEmail(form.getEmail());
+        newUser.setEmail(form.getEmail().trim());
         newUser.setPhoneNumber(form.getPhoneNumber());
         newUser.setAccountType(form.getAccountType());
         newUser.setEnabled(form.isEnabled());

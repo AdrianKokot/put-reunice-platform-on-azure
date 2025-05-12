@@ -2,7 +2,6 @@ package put.eunice.cms.resource.storage;
 
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.models.ListBlobsOptions;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;

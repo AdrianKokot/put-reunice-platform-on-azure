@@ -1,21 +1,18 @@
 package put.eunice.cms.development;
 
-import org.springframework.mock.web.MockMultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
-
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.http.fileupload.disk.DiskFileItem;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import put.eunice.cms.backup.BackupService;
 import put.eunice.cms.backup.exceptions.BackupException;
 import put.eunice.cms.configuration.ApplicationConfigurationProvider;
@@ -25,6 +22,7 @@ import put.eunice.cms.page.PageService;
 import put.eunice.cms.page.global.GlobalPageService;
 import put.eunice.cms.page.projections.PageDtoFormCreate;
 import put.eunice.cms.page.projections.PageDtoFormUpdate;
+import put.eunice.cms.resource.FileService;
 import put.eunice.cms.security.Role;
 import put.eunice.cms.template.TemplateService;
 import put.eunice.cms.template.projections.TemplateDtoFormCreate;
@@ -35,7 +33,6 @@ import put.eunice.cms.university.projections.UniversityDtoFormCreate;
 import put.eunice.cms.university.projections.UniversityDtoFormUpdate;
 import put.eunice.cms.user.UserService;
 import put.eunice.cms.user.projections.UserDtoFormCreate;
-import put.eunice.cms.resource.FileService;
 
 @Slf4j
 @Component
@@ -686,25 +683,30 @@ class DummyDataCreator implements ApplicationListener<ContextRefreshedEvent> {
                         "ul. Krakowska 71-79, 71-017 Szczecin",
                         "https://www.us.szc.pl/"));
 
-        var universityIdToLogoFileName = Map.of(
-                1L, "put_logo.jpg",
-                2L, "uam_logo.png",
-                3L, "pums_logo.png",
-                4L, "blank.png",
-                5L, "ufa_logo.png",
-                6L, "wut_logo.jpg",
-                7L, "blank.png",
-                8L, "gmu_logo.png",
-                9L, "blank.png",
-                10L, "us_logo.jpg");
+        var universityIdToLogoFileName =
+                Map.of(
+                        1L, "put_logo.jpg",
+                        2L, "uam_logo.png",
+                        3L, "pums_logo.png",
+                        4L, "blank.png",
+                        5L, "ufa_logo.png",
+                        6L, "wut_logo.jpg",
+                        7L, "blank.png",
+                        8L, "gmu_logo.png",
+                        9L, "blank.png",
+                        10L, "us_logo.jpg");
 
         for (var entry : universityIdToLogoFileName.entrySet()) {
             var universityId = entry.getKey();
 
             try {
-                var logoFile = new File(applicationConfigurationProvider.getUploadsDirectory() + entry.getValue());
+                var logoFile =
+                        new File(applicationConfigurationProvider.getUploadsDirectory() + entry.getValue());
                 if (logoFile.exists()) {
-                    var logoFilePath = fileService.store(new MockMultipartFile(logoFile.getName(), Files.readAllBytes(logoFile.toPath())), logoFile.getName());
+                    var logoFilePath =
+                            fileService.store(
+                                    new MockMultipartFile(logoFile.getName(), Files.readAllBytes(logoFile.toPath())),
+                                    logoFile.getName());
 
                     universityService.setUniversityImage(universityId, logoFilePath);
                 } else {
@@ -714,7 +716,7 @@ class DummyDataCreator implements ApplicationListener<ContextRefreshedEvent> {
                 log.error("Error reading logo file", e);
             }
         }
-        
+
         universityService.update(1L, new UniversityDtoFormUpdate(null, null, null, null, null, false));
         universityService.update(2L, new UniversityDtoFormUpdate(null, null, null, null, null, false));
         universityService.update(3L, new UniversityDtoFormUpdate(null, null, null, null, null, false));

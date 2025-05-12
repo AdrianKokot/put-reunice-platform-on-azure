@@ -120,7 +120,7 @@ resource "azurerm_container_group" "backend_container" {
 
   container {
     name   = "backend-container"
-    image  = "ghcr.io/adriankokot/put-reunice-platform-on-azure/backend:latest"
+    image  = "ghcr.io/adriankokot/put-reunice-platform-on-azure/backend:pr-20"
     cpu    = 1
     memory = 2
     environment_variables = {
@@ -135,6 +135,7 @@ resource "azurerm_container_group" "backend_container" {
       DATABASE_SCHEMA_HANDLING_ON_STARTUP = "create"
       DATABASE_SCHEMA_CREATE_TYPE         = "populate"
       EMAIL_TEMPLATES_DIRECTORY           = "/app/emailTemplates/"
+      UPLOADS_DIRECTORY                   = "/app/uploads/"
       SMTP_SERVER                         = "put-reunice-mailpit.northeurope.azurecontainer.io"
       SMTP_PORT                           = 1025
       SMTP_USERNAME                       = var.smtp_username
@@ -186,7 +187,7 @@ resource "azurerm_container_group" "frontend_container" {
 
   container {
     name   = "frontend-container"
-    image  = "ghcr.io/adriankokot/put-reunice-platform-on-azure/frontend:latest"
+    image  = "ghcr.io/adriankokot/put-reunice-platform-on-azure/frontend:pr-20"
     cpu    = 1
     memory = 2
     environment_variables = {
@@ -267,10 +268,10 @@ resource "azurerm_container_group" "mailpit_container" {
 # Typesense
 
 resource "azurerm_storage_share" "typesense_fileshare" {
-  name                 = "typesense-data"
+  name               = "typesense-data"
   storage_account_id = azurerm_storage_account.storage_account.id
-  quota                = 50 # GB
-  depends_on = [ azurerm_storage_account.storage_account ]
+  quota              = 50 # GB
+  depends_on         = [azurerm_storage_account.storage_account]
 }
 
 resource "azurerm_container_group" "typesense_container" {
@@ -300,8 +301,8 @@ resource "azurerm_container_group" "typesense_container" {
       mount_path           = "/data"
       storage_account_key  = azurerm_storage_account.storage_account.primary_access_key
       storage_account_name = azurerm_storage_account.storage_account.name
-      share_name = azurerm_storage_share.typesense_fileshare.name
-      read_only = false
+      share_name           = azurerm_storage_share.typesense_fileshare.name
+      read_only            = false
     }
   }
 

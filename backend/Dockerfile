@@ -6,6 +6,7 @@ WORKDIR /workspace
 COPY pom.xml /workspace
 COPY src /workspace/src
 COPY emailTemplates /workspace/emailTemplates
+COPY uploads /workspace/uploads
 RUN mvn -f pom.xml clean package
 
 ### Run ###
@@ -13,6 +14,7 @@ FROM amazoncorretto:11-alpine-jdk
 WORKDIR /app
 COPY --from=build /workspace/target/*.jar ./app.jar
 COPY --from=build /workspace/emailTemplates ./emailTemplates
+COPY --from=build /workspace/uploads ./uploads
 EXPOSE 8080
 
 HEALTHCHECK --start-period=20s --interval=5s --timeout=10s --retries=5 \

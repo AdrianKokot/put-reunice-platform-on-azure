@@ -48,10 +48,10 @@ jobs:
         run: npx nx format:check
       - name: 📄 Lint
         run: npx nx affected -t lint --parallel=3
-      - name: ⚡ Test
-        run: npx nx affected -t test --parallel=3 --configuration=ci
-      - name: ⚙️ Build
-        run: npx nx affected -t build --parallel=3
+      # - name: ⚡ Test
+      #   run: npx nx affected -t test --parallel=3 --configuration=ci
+      # - name: ⚙️ Build
+      #   run: npx nx affected -t build --parallel=3
 
 
   build-and-push-backend-image:

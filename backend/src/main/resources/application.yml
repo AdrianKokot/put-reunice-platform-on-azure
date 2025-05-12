@@ -42,7 +42,6 @@ server:
       cookie:
         http-only: false
         secure: false
-        same-site: none
       timeout: 30m
 
 spring:

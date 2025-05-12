@@ -4,6 +4,7 @@ on:
   push:
     branches: [ main ]
   pull_request:
+    branches: [ main ]
 
 jobs:
   build-and-test-java:
@@ -53,7 +54,6 @@ jobs:
       - name: ⚙️ Build
         run: npx nx affected -t build --parallel=3
 
-
   build-and-push-backend-image:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     name: 📦 Build and push backend container image to registry
@@ -99,7 +99,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-
   build-and-push-frontend-image:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     name: 📦 Build and push frontend container image to registry
@@ -144,3 +143,45 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  run-terraform:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    name: 🏗️ Terraform / Plan and apply
+    runs-on: ubuntu-latest
+    environment: production
+    needs: [build-and-push-backend-image, build-and-push-frontend-image]
+
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+
+    env:
+      ARM_CLIENT_ID: "${{ secrets.AZURE_CLIENT_ID }}"
+      ARM_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+      ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}"
+      ARM_SKIP_PROVIDER_REGISTRATION: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        run: |
+          cd terraform
+          terraform init
+
+      - name: Terraform Plan
+        run: |
+          cd terraform
+          terraform plan
+
+      - name: Terraform Apply
+        run: |
+          cd terraform
+          terraform apply -var="github_pat=${{ secrets.PAT }}" -auto-approve

@@ -22,12 +22,6 @@ variable "container_name" {
   default     = "public-blob-container"
 }
 
-variable "subscription_id" {
-  description = "Azure subscription ID"
-  type        = string
-  default     = "your-subscription-id"
-}
-
 variable "github_pat" {
   description = "GitHub Personal Access Token for GHCR"
   type        = string

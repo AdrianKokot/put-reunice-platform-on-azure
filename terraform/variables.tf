@@ -28,6 +28,12 @@ variable "subscription_id" {
   default     = "your-subscription-id"
 }
 
+variable "github_pat" {
+  description = "GitHub Personal Access Token for GHCR"
+  type        = string
+  sensitive   = true
+}
+
 # PostgreSQL variables
 variable "postgres_server_name" {
   description = "Name of the PostgreSQL Flexible Server"
@@ -45,4 +51,55 @@ variable "postgres_user" {
   description = "PostgreSQL server admin username"
   type        = string
   default     = "postgres"
+}
+
+# Typesense
+variable "typesense_apikey" {
+  description = "Typesense API key"
+  type        = string
+  default     = "devapikey"
+}
+variable "typesense_cache_enabled" {
+  description = "Enable Typesense cache"
+  type        = bool
+  default     = true
+}
+
+variable "typesense_cache_ttl" {
+  description = "Typesense cache TTL in milliseconds"
+  type        = number
+  default     = 60000
+}
+
+variable "typesense_use_embedding" {
+  description = "Use Typesense embedding"
+  type        = bool
+  default     = false
+}
+
+variable "typesense_distance_threshold" {
+  description = "Typesense distance threshold"
+  type        = number
+  default     = 0.30
+}
+
+# Github
+variable "github_username" {
+  description = "GitHub username for GHCR"
+  type        = string
+  default     = "AdrianKokot"
+}
+
+# Mailpit
+
+variable "smtp_username" {
+  description = "SMTP username for Mailpit"
+  type        = string
+  default     = "test"
+}
+
+variable "smtp_password" {
+  description = "SMTP password for Mailpit"
+  type        = string
+  default     = "test"
 }

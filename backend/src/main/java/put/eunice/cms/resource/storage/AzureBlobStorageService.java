@@ -2,7 +2,9 @@ package put.eunice.cms.resource.storage;
 
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.models.ListBlobsOptions;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.time.Duration;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +26,23 @@ public class AzureBlobStorageService implements StorageService {
             @Value("${azure.storage.container-name}") String containerName) {
         this.containerName = containerName;
         this.blobServiceClient = blobServiceClient;
+    }
+
+    public String store(File file, String filename) throws IOException {
+        if (file == null || !file.exists() || file.length() == 0) {
+            throw new IOException("Failed to store empty file.");
+        }
+
+        var blobContainerClient = blobServiceClient.getBlobContainerClient(containerName);
+        var blobClient = blobContainerClient.getBlobClient(filename);
+
+        try (var inputStream = Files.newInputStream(file.toPath())) {
+            blobClient.upload(inputStream, file.length(), true);
+        }
+
+        var url = blobClient.getBlobUrl().replaceAll("%2F", "/");
+        log.finer("Stored blob: " + filename + " at " + url);
+        return url;
     }
 
     public String store(MultipartFile file, String filename) throws IOException {

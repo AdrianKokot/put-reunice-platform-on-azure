@@ -1,16 +1,15 @@
 package put.eunice.cms.development;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -23,6 +22,7 @@ import put.eunice.cms.page.PageService;
 import put.eunice.cms.page.global.GlobalPageService;
 import put.eunice.cms.page.projections.PageDtoFormCreate;
 import put.eunice.cms.page.projections.PageDtoFormUpdate;
+import put.eunice.cms.resource.FileService;
 import put.eunice.cms.security.Role;
 import put.eunice.cms.template.TemplateService;
 import put.eunice.cms.template.projections.TemplateDtoFormCreate;
@@ -48,6 +48,7 @@ class DummyDataCreator implements ApplicationListener<ContextRefreshedEvent> {
     private final TemplateService templateService;
     private final BackupService backupService;
     private final TicketService ticketService;
+    private final FileService fileService;
 
     private final HealthService healthService;
 
@@ -609,7 +610,6 @@ class DummyDataCreator implements ApplicationListener<ContextRefreshedEvent> {
                         1L,
                         "Piotrowo 3, 60-965 Poznań",
                         "https://www.put.poznan.pl/"));
-        universityService.setUniversityImage(1L, "/static/put_logo.jpg");
         universityService.addNewUniversity(
                 new UniversityDtoFormCreate(
                         "Adam Mickiewicz University in Poznań",
@@ -618,7 +618,6 @@ class DummyDataCreator implements ApplicationListener<ContextRefreshedEvent> {
                         1L,
                         "Uniwersytet im. Adama Mickiewicza w Poznaniu, ul. Wieniawskiego 1, 61-712 Poznań",
                         "https://amu.edu.pl/"));
-        universityService.setUniversityImage(2L, "/static/uam_logo.png");
         universityService.addNewUniversity(
                 new UniversityDtoFormCreate(
                         "Poznań University of Medical Sciences",
@@ -627,7 +626,6 @@ class DummyDataCreator implements ApplicationListener<ContextRefreshedEvent> {
                         1L,
                         "ul. Rokietnicka 5, 60-806 Poznań",
                         "https://pums.edu.pl/"));
-        universityService.setUniversityImage(3L, "/static/pums_logo.png");
         universityService.addNewUniversity(
                 new UniversityDtoFormCreate(
                         "Poznań University of Economics and Business",
@@ -644,7 +642,6 @@ class DummyDataCreator implements ApplicationListener<ContextRefreshedEvent> {
                         2L,
                         "ul. Wojska Polskiego 121, 60-624 Poznań",
                         "https://uap.edu.pl/"));
-        universityService.setUniversityImage(5L, "/static/ufa_logo.png");
         universityService.addNewUniversity(
                 new UniversityDtoFormCreate(
                         "Wroclaw University of Technology",
@@ -653,7 +650,6 @@ class DummyDataCreator implements ApplicationListener<ContextRefreshedEvent> {
                         2L,
                         "Wybrzeże Wyspiańskiego 27, 50-370 Wrocław",
                         "https://pwr.edu.pl/"));
-        universityService.setUniversityImage(6L, "/static/wut_logo.jpg");
         universityService.addNewUniversity(
                 new UniversityDtoFormCreate(
                         "Karol Lipiński Academy of Music in Wrocław",
@@ -670,7 +666,6 @@ class DummyDataCreator implements ApplicationListener<ContextRefreshedEvent> {
                         3L,
                         "ul. Morska 81-87, 81-225 Gdynia",
                         "https://www.am.gdynia.pl/"));
-        universityService.setUniversityImage(8L, "/static/gmu_logo.png");
         universityService.addNewUniversity(
                 new UniversityDtoFormCreate(
                         "Chopin University of Music",
@@ -687,7 +682,40 @@ class DummyDataCreator implements ApplicationListener<ContextRefreshedEvent> {
                         3L,
                         "ul. Krakowska 71-79, 71-017 Szczecin",
                         "https://www.us.szc.pl/"));
-        universityService.setUniversityImage(10L, "/static/us_logo.jpg");
+
+        var universityIdToLogoFileName =
+                Map.of(
+                        1L, "/put_logo.jpg",
+                        2L, "/uam_logo.jpg",
+                        3L, "/pums_logo.jpg",
+                        4L, "/pueb_logo.jpg",
+                        5L, "/ufa_logo.jpg",
+                        6L, "/wut_logo.jpg",
+                        7L, "/klam_logo.jpg",
+                        8L, "/gmu_logo.jpg",
+                        9L, "/chum_logo.jpg",
+                        10L, "/us_logo.jpg");
+
+        for (var entry : universityIdToLogoFileName.entrySet()) {
+            var universityId = entry.getKey();
+
+            try {
+                var logoFile =
+                        new File(applicationConfigurationProvider.getUploadsDirectory() + entry.getValue());
+                if (logoFile.exists()) {
+                    var logoFilePath =
+                            fileService.store(
+                                    new MockMultipartFile(logoFile.getName(), Files.readAllBytes(logoFile.toPath())),
+                                    logoFile.getName());
+
+                    universityService.setUniversityImage(universityId, logoFilePath);
+                } else {
+                    log.error("Logo file not found: {}", logoFile.getAbsolutePath());
+                }
+            } catch (IOException e) {
+                log.error("Error reading logo file", e);
+            }
+        }
 
         universityService.update(1L, new UniversityDtoFormUpdate(null, null, null, null, null, false));
         universityService.update(2L, new UniversityDtoFormUpdate(null, null, null, null, null, false));

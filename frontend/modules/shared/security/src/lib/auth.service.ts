@@ -12,12 +12,13 @@ import {
 } from 'rxjs';
 import { LoggedUser, User } from '@eunice/modules/shared/data-access';
 import { throwError } from '@eunice/modules/shared/util';
+import { environment } from '@eunice/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly _resourceUrl = '/api/users';
+  private readonly _resourceUrl = `${environment.apiUrl}/api/users`;
   private readonly _http = inject(HttpClient);
   private readonly _user$ = new Subject<User | null>();
 
@@ -36,12 +37,12 @@ export class AuthService {
 
   private getUser() {
     return this._http
-      .get<User>('/api/users/logged')
+      .get<User>(`${this._resourceUrl}/logged`)
       .pipe(catchError(() => of(null)));
   }
 
   login(user: Pick<User, 'password' | 'username'>): Observable<User | null> {
-    return this._http.post('/api/login', user).pipe(
+    return this._http.post(`${this._resourceUrl}/login`, user).pipe(
       switchMap(() => this.getUser()),
       tap((user) => this._user$.next(user)),
     );
@@ -49,7 +50,7 @@ export class AuthService {
 
   logout(): Observable<unknown> {
     return this._http
-      .post('/api/logout', {})
+      .post(`${environment.apiUrl}/logout`, {})
       .pipe(tap(() => this._user$.next(null)));
   }
 

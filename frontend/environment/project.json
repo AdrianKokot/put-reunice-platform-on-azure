@@ -1,0 +1,8 @@
+{
+  "name": "environment",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "modules/shared/security/src",
+  "prefix": "eunice",
+  "tags": [],
+  "projectType": "library"
+}

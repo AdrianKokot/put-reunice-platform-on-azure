@@ -121,6 +121,8 @@ public class PageFullTextSearchService extends BaseFullTextSearchService
     }
 
     public void createCollection() {
+        if (!isConnected()) return;
+
         List<Field> fields = new ArrayList<>();
 
         fields.add(new Field().name("pageId").type(FieldTypes.INT32));

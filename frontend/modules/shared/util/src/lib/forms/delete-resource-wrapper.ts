@@ -112,7 +112,8 @@ export class DeleteResourceWrapper<
     // @ts-expect-error Generics sometimes don't work well with this
     method: ObservableOneArgumentMethods<TResource, TService> = 'delete',
   ) {
-    this.deleteMethod = (id) => this.service[method](id);
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    this.deleteMethod = (id) => (this.service[method] as Function)(id);
     this._delete$.next(id);
   }
 

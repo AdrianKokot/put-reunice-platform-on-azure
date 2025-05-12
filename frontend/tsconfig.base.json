@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@eunice/environment": ["environment/environment.ts"],
       "@eunice/modules/admin": ["modules/admin/src/index.ts"],
       "@eunice/modules/auth": ["modules/auth/src/index.ts"],
       "@eunice/modules/shared/data-access": [

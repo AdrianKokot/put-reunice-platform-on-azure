@@ -81,3 +81,7 @@ npm start
 
 ### Configure the application
 Please read the instructions in the `.env.example` file (located in the main project directory). Copy the file and name it `.env`. Adjust all configuration variables in that file. When first deploying the application using `docker-compose`, the variable `DATABASE_SCHEMA_HANDLING_ON_STARTUP` should be set to `create`. Once deployed, the value should be changed to `validate` or `update`. Details can be found in the comments available in `.env.example` file.
+
+## Architecture Diagram
+Below is the architecture diagram that illustrates the structure and components of the Reunice application deployed on Microsoft Azure.
+![Azure Architecture Diagram](./azure-diagram.png)

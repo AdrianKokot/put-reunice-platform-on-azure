@@ -236,6 +236,10 @@ resource "azurerm_container_group" "frontend_container" {
 
   ip_address_type = "Public"
   dns_name_label  = "put-reunice-frontend"
+
+  depends_on = [
+    azurerm_container_group.backend_container
+  ]
 }
 
 # Mailpit

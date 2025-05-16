@@ -2,6 +2,8 @@
 
 This project is a fork of REUNICE CMS prototype, that adds support for running REUNICE CMS on Azure cloud.
 
+[Original project](https://github.com/AdrianKokot/put-reunice-platform)
+
 ## About 
 EUNICE Platform is a content management system (CMS) designed for building and maintaining university websites. It supports multiple user roles—anonymous visitors, university users, administrators, and system admins—with increasing levels of control and access.
 
@@ -14,9 +16,7 @@ It allows users to:
 - Use role-based admin panels to control content, users, and submissions
 - Deploy easily using Azure Cloud
 
-Detailed user manual is available [here](./user_manual.pdf)
-
-[Original project](https://github.com/AdrianKokot/put-reunice-platform)
+Detailed user manual is available [here](./user_manual.pdf).
 
 ## Running terraform
 

@@ -4,6 +4,20 @@ This project is a fork of REUNICE CMS prototype, that adds support for running R
 
 [Original project](https://github.com/AdrianKokot/put-reunice-platform)
 
+## About 
+EUNICE Platform is a content management system (CMS) designed for building and maintaining university websites. It supports multiple user roles—anonymous visitors, university users, administrators, and system admins—with increasing levels of control and access.
+
+It allows users to:
+- Browse and search university pages and resources
+- Manage content with a WYSIWYG editor
+- Upload and link resources (files or external links)
+- Handle contact inquiries via a built-in messaging system
+- Create and manage universities, users, templates, and backups
+- Use role-based admin panels to control content, users, and submissions
+- Deploy easily using Azure Cloud
+
+Detailed user manual is available [here](./user_manual.pdf).
+
 ## Running terraform
 
 ```bash
